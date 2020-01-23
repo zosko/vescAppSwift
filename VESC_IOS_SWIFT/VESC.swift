@@ -98,7 +98,7 @@ class VESC: NSObject {
     func dataForGetValues() -> Data{
         
         var command : [UInt8] = [UInt8](repeating: 0, count: 5)
-        command[0] = 51 //UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue);
+        command[0] = UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue);
         command[1] = 0x00 //mask MSB
         command[2] = 0x0F //mask
         command[3] = 0xFF //mask
@@ -107,16 +107,16 @@ class VESC: NSObject {
         let crcPayload = crc16(data: command, length: command.count)
         var messageSend : [UInt8] = [UInt8](repeating: 0, count: 10)
         
-        messageSend[0] = 2 //UInt8(PACKET_LENGTH.PACKET_LENGTH_IDENTIFICATION_BYTE_SHORT.rawValue)
+        messageSend[0] = UInt8(PACKET_LENGTH.PACKET_LENGTH_IDENTIFICATION_BYTE_SHORT.rawValue)
         messageSend[1] = 5
-        messageSend[2] = 51 //UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue)
+        messageSend[2] = UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue)
         messageSend[3] = 0x00
         messageSend[4] = 0x0F
         messageSend[5] = 0xFF
         messageSend[6] = 0xFF
         messageSend[7] = (UInt8)(crcPayload >> 8)
         messageSend[8] = (UInt8)(crcPayload & 0xFF)
-        messageSend[9] = 3 //UInt8(PACKET_LENGTH.PACKET_TERMINATION_BYTE.rawValue)
+        messageSend[9] = UInt8(PACKET_LENGTH.PACKET_TERMINATION_BYTE.rawValue)
         
         return Data(bytes: messageSend, count: messageSend.count)
     }
@@ -147,7 +147,7 @@ class VESC: NSObject {
                 break;
             }
             
-            if counter == endMessage && messageReceived[endMessage - 1] == 3 {
+            if counter == endMessage && messageReceived[endMessage - 1] == UInt8(PACKET_LENGTH.PACKET_TERMINATION_BYTE.rawValue) {
                 messageReceived[endMessage] = 0;
                 messageRead = true;
                 
@@ -184,7 +184,7 @@ class VESC: NSObject {
     }
     
     func buffer_get_int16(buffer: [UInt8], index : Int) -> UInt16{
-        return UInt16(buffer[index] << 8 | buffer[index + 1])
+        return UInt16(buffer[index]) << 8 | UInt16(buffer[index + 1])
     }
     func buffer_get_int32(buffer: [UInt8], index : Int) -> UInt32 {
         return UInt32(buffer[index]) << 24 | UInt32(buffer[index + 1]) << 16 | UInt32(buffer[index + 2]) << 8 | UInt32(buffer[index + 3])
@@ -213,8 +213,10 @@ class VESC: NSObject {
 
             values.temp_mos = buffer_get_float16(buffer: payload2, scale: 1e1, index: ind)
             ind = ind + 2
+            
             values.temp_motor = buffer_get_float16(buffer: payload2, scale: 1e1, index: ind)
             ind = ind + 2
+            
             values.current_motor = buffer_get_float32(buffer: payload2, scale: 1e2, index: ind)
             ind = ind + 4
 
@@ -256,9 +258,10 @@ class VESC: NSObject {
             
             values.pid_pos = buffer_get_float32(buffer: payload2, scale:1e4, index:ind)
             ind = ind + 4
-            
+
             values.fault_code = Int(payload2[ind])
             ind = ind + 1
+            
             values.vesc_id = Int(payload2[ind])
             ind = ind + 1
             
@@ -267,7 +270,6 @@ class VESC: NSObject {
             
             values.watt_left = buffer_get_float32(buffer: payload2, scale:1e4, index:ind);
             ind = ind + 4
-
         }
         
         resetPacket()

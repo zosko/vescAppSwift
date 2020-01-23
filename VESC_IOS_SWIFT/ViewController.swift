@@ -81,7 +81,6 @@ class ViewController: UIViewController,CBCentralManagerDelegate,CBPeripheralDele
     }
     func doGetValues(){
         timerValues = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
-            print("sent")
             self.connectedPeripheral.writeValue(self.vescController.dataForGetValues(), for: self.txCharacteristic, type: self.writeType)
         })
     }
