@@ -80,85 +80,55 @@ class ViewController: UIViewController,CBCentralManagerDelegate,CBPeripheralDele
         self.present(alert, animated: true, completion: nil)
     }
     func doGetValues(){
-        timerValues = Timer.scheduledTimer(withTimeInterval: 3, repeats: true, block: { (timer) in
+        timerValues = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
             print("sent")
             self.connectedPeripheral.writeValue(self.vescController.dataForGetValues(), for: self.txCharacteristic, type: self.writeType)
         })
     }
-    func presentData(){
-//        let wheelDiameter = 700; //mm diameter
-//        let motorDiameter = 63; //mm diameter
-//        let gearRatio = motorDiameter / wheelDiameter;
-//        let motorPoles = 14;
-//
-//        let ratioRpmSpeed = (gearRatio * 60 * wheelDiameter * M_PI) / ((motorPoles / 2) * 1000000); // ERPM to Km/h
-//        let ratioPulseDistance = (gearRatio * wheelDiameter * M_PI) / ((motorPoles * 3) * 1000000); // Pulses to km travelled
-//
-//        let speed = dataVesc.rpm * ratioRpmSpeed;
-//        let distance = dataVesc.tachometer_abs * ratioPulseDistance;
-//        let power = dataVesc.current_in * dataVesc.v_in;
-//
-//        let h = secondStarted / 3600;
-//        let m = (secondStarted / 60) % 60;
-//        let s = secondStarted % 60;
-        
-        arrPedalessData = [
-//            ["title":"Temp MOSFET","data":String(format: @"%.2f degC",dataVesc.temp_mos)]
-            
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"],
-            ["title":"Temp MOSFET","data":"22degC"]
-        ]
-        
-//        arrPedalessData = @[@{@"title":@"Temp MOSFET",@"data":[NSString stringWithFormat:@"%.2f degC",dataVesc.temp_mos]},
-//                            @{@"title":@"Temp Motor",@"data":[NSString stringWithFormat:@"%.2f degC",dataVesc.temp_motor]},
-//
-//                            @{@"title":@"Ah Discharged",@"data":[NSString stringWithFormat:@"%.4f Ah",dataVesc.amp_hours]},
-//                            @{@"title":@"Ah Charged",@"data":[NSString stringWithFormat:@"%.4f Ah",dataVesc.amp_hours_charged]},
-//
-//                            @{@"title":@"Motor Current",@"data":[NSString stringWithFormat:@"%.2f A",dataVesc.current_motor]},
-//                            @{@"title":@"Battery Current",@"data":[NSString stringWithFormat:@"%.2f A",dataVesc.current_in]},
-//
-//                            @{@"title":@"Watts Discharged",@"data":[NSString stringWithFormat:@"%.4f Wh" ,dataVesc.watt_hours]},
-//                            @{@"title":@"Watts Charged",@"data":[NSString stringWithFormat:@"%.4f Wh" ,dataVesc.watt_hours_charged]},
-//
-//                            @{@"title":@"Watts Left",@"data":[NSString stringWithFormat:@"%.f Wh" ,dataVesc.watt_left]},
-//                            @{@"title":@"Battery Level",@"data":[NSString stringWithFormat:@"%.f%%",dataVesc.battery_level]},
-//
-//                            @{@"title":@"Power",@"data":[NSString stringWithFormat:@"%.f W",power]},
-//                            @{@"title":@"Distance",@"data":[NSString stringWithFormat:@"%.2f km", distance]},
-//
-//                            @{@"title":@"Speed",@"data":[NSString stringWithFormat:@"%.1f km/h",speed]},
-//                            @{@"title":@"Speed VESC",@"data":[NSString stringWithFormat:@"%.1f km/h",dataVesc.speed]},
-//
-//                            @{@"title":@"Fault Code",@"data":self.errorVESC[dataVesc.fault_code]},
-//                            @{@"title":@"Drive time",@"data":[NSString stringWithFormat:@"%ld:%02ld:%02ld", h, m, s]},
-//
-//                            @{@"title":@"Voltage",@"data":[NSString stringWithFormat:@"%.2f V",dataVesc.v_in]},
-//                            @{@"title":@"Duty Now",@"data":[NSString stringWithFormat:@"%.f",dataVesc.duty_now]},
-//
-//                            @{@"title":@"VESCs #",@"data":[NSString stringWithFormat:@"%d",dataVesc.vesc_num]},
-//                            @{@"title":@"VESC ID",@"data":[NSString stringWithFormat:@"%d",dataVesc.vesc_id]}
-//        ];
+    func presentData(dataVesc : mc_values){
+        let wheelDiameter = 700.0 //mm diameter
+        let motorDiameter = 63.0 //mm diameter
+        let gearRatio : Double = motorDiameter / wheelDiameter
+        let motorPoles = 14.0
+
+        let ratioRpmSpeed = gearRatio * 60.0 * wheelDiameter * Double.pi / motorPoles / 2.0 * 1000000.0 // ERPM to Km/h
+        let ratioPulseDistance = gearRatio * wheelDiameter * Double.pi / motorPoles * 3.0 * 1000000.0 // Pulses to km travelled
+
+        let speed = dataVesc.rpm * ratioRpmSpeed
+        let distance = Double(dataVesc.tachometer_abs) * ratioPulseDistance
+        let power = dataVesc.current_in * dataVesc.v_in
+
+        let h = secondStarted / 3600
+        let m = (secondStarted / 60) % 60
+        let s = secondStarted % 60
+                        
+        arrPedalessData = [["title":"Temp MOSFET","data":String(format:"%.2f degC",dataVesc.temp_mos)],
+                           ["title":"Temp Motor","data":String(format:"%.2f degC",dataVesc.temp_motor)],
+                           ["title":"Ah Discharged","data":String(format:"%.4f Ah",dataVesc.amp_hours)],
+                           ["title":"Ah Charged","data":String(format:"%.4f Ah",dataVesc.amp_hours_charged)],
+                           ["title":"Motor Current","data":String(format:"%.2f A",dataVesc.current_motor)],
+                           ["title":"Battery Current","data":String(format:"%.2f A",dataVesc.current_in)],
+                           ["title":"Watts Discharged","data":String(format:"%.4f Wh" ,dataVesc.watt_hours)],
+                           ["title":"Watts Charged","data":String(format:"%.4f Wh" ,dataVesc.watt_hours_charged)],
+                           ["title":"Watts Left","data":String(format:"%.f Wh" ,dataVesc.watt_left)],
+                           ["title":"Battery Level","data":String(format:"%.f%%",dataVesc.battery_level)],
+                           ["title":"Power","data":String(format:"%.f W",power)],
+                           ["title":"Distance","data":String(format:"%.2f km", distance)],
+                           ["title":"Speed","data":String(format:"%.1f km/h",speed)],
+                           ["title":"Speed VESC","data":String(format:"%.1f km/h",dataVesc.speed)],
+                           ["title":"Fault Code","data":String(format: "%d",dataVesc.fault_code)],
+                           ["title":"Drive time","data":String(format:"%ld:%02ld:%02ld", h, m, s)],
+                           ["title":"Voltage","data":String(format:"%.2f V",dataVesc.v_in)],
+                           ["title":"Duty Now","data":String(format:"%.f",dataVesc.duty_now)],
+                           ["title":"VESCs #","data":String(format:"%d",dataVesc.vesc_num)],
+                           ["title":"VESC ID","data":String(format:"%d",dataVesc.vesc_id)]
+        ];
         
         tblPedalessData.reloadData()
-//
-//        if(dataVesc.current_motor > 0){
-//           secondStarted = secondStarted + 1;
-//        }
+
+        if(dataVesc.current_motor > 0){
+           secondStarted = secondStarted + 1;
+        }
     }
     
     //MARK: CentralManagerDelegates
@@ -215,7 +185,7 @@ class ViewController: UIViewController,CBCentralManagerDelegate,CBPeripheralDele
             return
         }
         if vescController.process_incoming_bytes(incomingData: characteristic.value!) > 0 {
-            vescController.readPacket()
+            presentData(dataVesc: vescController.readPacket())
         }
     }
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
@@ -237,7 +207,7 @@ class ViewController: UIViewController,CBCentralManagerDelegate,CBPeripheralDele
                 peripheral.setNotifyValue(true, for: characteristic)
                 writeType = characteristic.properties == .write ? .withResponse : .withoutResponse
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.doGetValues()
                 }
             }

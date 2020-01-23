@@ -13,7 +13,7 @@ enum PACKET_LENGTH: Int {
     case PACKET_TERMINATION_BYTE = 3
 }
 
-enum COMM_PACKET_ID: Int {
+public enum COMM_PACKET_ID: Int {
     case COMM_GET_VALUES_SETUP_SELECTIVE = 51
 }
 
@@ -38,6 +38,10 @@ struct mc_values{
     var speed = 0.0
     var battery_level = 0.0
     var watt_left = 0.0
+    
+    init(){
+        
+    }
 }
 
 class VESC: NSObject {
@@ -76,8 +80,8 @@ class VESC: NSObject {
     var endMessage = 256
     var messageRead = false
     var lenPayload = 0
-    var messageReceived : [UInt8] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    var payload : [UInt8] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    var messageReceived : [UInt8] = [UInt8](repeating: 0, count: 256)
+    var payload : [UInt8] = []
     
     func crc16(data: [UInt8], length : Int) -> UInt16{
         var crc = 0
@@ -93,26 +97,26 @@ class VESC: NSObject {
     
     func dataForGetValues() -> Data{
         
-        var command : [UInt8] = [0,0,0,0,0]
-        command[0] = UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue);
-        command[1] = 0x00 ; //mask MSB
-        command[2] = 0x0F ; //mask
-        command[3] = 0xFF ; //mask
-        command[4] = 0xFF ; //mask LSB
+        var command : [UInt8] = [UInt8](repeating: 0, count: 5)
+        command[0] = 51 //UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue);
+        command[1] = 0x00 //mask MSB
+        command[2] = 0x0F //mask
+        command[3] = 0xFF //mask
+        command[4] = 0xFF //mask LSB
         
         let crcPayload = crc16(data: command, length: command.count)
-        var messageSend : [UInt8]  = [0,0,0,0,0,0,0,0,0,0]
+        var messageSend : [UInt8] = [UInt8](repeating: 0, count: 10)
         
-        messageSend[0] = UInt8(PACKET_LENGTH.PACKET_LENGTH_IDENTIFICATION_BYTE_SHORT.rawValue)
-        messageSend[1] = 5;
-        messageSend[2] = UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue)
+        messageSend[0] = 2 //UInt8(PACKET_LENGTH.PACKET_LENGTH_IDENTIFICATION_BYTE_SHORT.rawValue)
+        messageSend[1] = 5
+        messageSend[2] = 51 //UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue)
         messageSend[3] = 0x00
         messageSend[4] = 0x0F
         messageSend[5] = 0xFF
         messageSend[6] = 0xFF
         messageSend[7] = (UInt8)(crcPayload >> 8)
         messageSend[8] = (UInt8)(crcPayload & 0xFF)
-        messageSend[9] = UInt8(PACKET_LENGTH.PACKET_TERMINATION_BYTE.rawValue)
+        messageSend[9] = 3 //UInt8(PACKET_LENGTH.PACKET_TERMINATION_BYTE.rawValue)
         
         return Data(bytes: messageSend, count: messageSend.count)
     }
@@ -122,7 +126,7 @@ class VESC: NSObject {
         let bytes: [UInt8] = incomingData.map{ $0 }
         
         for i in 0 ..< incomingData.count {
-            messageReceived.insert(UInt8(bytes[i]), at: counter)
+            messageReceived[counter] = bytes[i]
             counter = counter + 1
             
             if counter == 2 {
@@ -131,6 +135,9 @@ class VESC: NSObject {
                         endMessage = Int(messageReceived[1]) + 5
                         lenPayload = Int(messageReceived[1])
                         break;
+                    case 3:
+                    //ToDo: Add Message Handling > 255 (starting with 3)
+                    break;
                     default:
                         break;
                 }
@@ -151,7 +158,21 @@ class VESC: NSObject {
 
         var unpacked = false;
         if (messageRead) {
-            unpacked = UnpackPayload(message: messageReceived, lenMes: endMessage, lenPay: Int(messageReceived[1]))
+            
+            var crcMessage : UInt16
+            crcMessage = UInt16(messageReceived[endMessage - 3]) << 8
+            crcMessage &= 0xFF00
+            crcMessage += UInt16(messageReceived[endMessage - 2])
+
+            for i in 0 ..< lenPayload {
+                payload.append(messageReceived[i+2])
+            }
+            
+            let crcPayload = crc16(data:payload, length: lenPayload)
+
+            if crcPayload == crcMessage {
+                unpacked = true
+            }
         }
         
         if (unpacked) {
@@ -162,41 +183,107 @@ class VESC: NSObject {
         }
     }
     
-    func UnpackPayload(message : [UInt8], lenMes : Int, lenPay : Int) -> Bool{
-        
-        var crcMessage = 0;
-        var crcPayload = 0;
-        
-        
-        var tmpMessage = message
-        
-        crcMessage = Int(message[lenMes - 3] << 8)
-        crcMessage &= 0xFF00
-        crcMessage = crcMessage + Int(message[lenMes - 2])
-        
-        memcpy(&payload, &tmpMessage[2], Int(message[1]))
-        
-        crcPayload = Int(crc16(data: payload, length: Int(message[1])))
-        print("\(crcPayload)  \(crcMessage)")
-        if crcPayload == crcMessage {
-            return true
-        }
-        else {
-            return false
-        }
+    func buffer_get_int16(buffer: [UInt8], index : Int) -> UInt16{
+        return UInt16(buffer[index] << 8 | buffer[index + 1])
+    }
+    func buffer_get_int32(buffer: [UInt8], index : Int) -> UInt32 {
+        return UInt32(buffer[index]) << 24 | UInt32(buffer[index + 1]) << 16 | UInt32(buffer[index + 2]) << 8 | UInt32(buffer[index + 3])
+    }
+    func buffer_get_float16(buffer: [UInt8], scale : Double, index : Int) -> Double{
+        return Double(buffer_get_int16(buffer: buffer, index: index)) / scale
+    }
+    func buffer_get_float32(buffer: [UInt8], scale : Double, index : Int) -> Double{
+        return (Double)(buffer_get_int32(buffer: buffer, index: index)) / scale
     }
     
-    func readPacket(){
+    func readPacket() -> mc_values{
+        
+        let packetId : COMM_PACKET_ID = COMM_PACKET_ID(rawValue: Int(payload[0]))!
+        var ind : Int = 0
+        var values = mc_values()
+        
+        var payload2 : [UInt8] = []
+        for i in 1 ..< payload.count {
+            payload2.append(payload[i])
+        }
+        
+        if packetId == COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE {
+            
+            ind = 4; // Skip the mask
+
+            values.temp_mos = buffer_get_float16(buffer: payload2, scale: 1e1, index: ind)
+            ind = ind + 2
+            values.temp_motor = buffer_get_float16(buffer: payload2, scale: 1e1, index: ind)
+            ind = ind + 2
+            values.current_motor = buffer_get_float32(buffer: payload2, scale: 1e2, index: ind)
+            ind = ind + 4
+
+            values.current_in = buffer_get_float32(buffer: payload2, scale:1e2, index:ind)
+            ind = ind + 4
+            
+            values.duty_now = buffer_get_float16(buffer: payload2, scale:1e3, index:ind)
+            ind = ind + 2
+            
+            values.rpm = buffer_get_float32(buffer: payload2,scale: 1e0, index:ind)
+            ind = ind + 4
+            
+            values.speed = buffer_get_float32(buffer: payload2,scale: 1e0,index: ind)
+            ind = ind + 4
+            
+            values.v_in = buffer_get_float16(buffer: payload2,scale: 1e1, index:ind)
+            ind = ind + 2
+            
+            values.battery_level = buffer_get_float16(buffer: payload2,scale: 1e1, index:ind)
+            ind = ind + 2
+            
+            values.amp_hours = buffer_get_float32(buffer: payload2, scale:1e4, index:ind)
+            ind = ind + 4
+            
+            values.amp_hours_charged = buffer_get_float32(buffer: payload2, scale:1e4, index:ind)
+            ind = ind + 4
+            
+            values.watt_hours = buffer_get_float32(buffer: payload2, scale:1e4, index:ind)
+            ind = ind + 4
+            
+            values.watt_hours_charged = buffer_get_float32(buffer: payload2, scale:1e4, index:ind)
+            ind = ind + 4
+            
+            values.tachometer = Int(buffer_get_int32(buffer: payload2, index:ind))
+            ind = ind + 4
+            
+            values.tachometer_abs = Int(buffer_get_int32(buffer: payload2, index:ind))
+            ind = ind + 4
+            
+            values.pid_pos = buffer_get_float32(buffer: payload2, scale:1e4, index:ind)
+            ind = ind + 4
+            
+            values.fault_code = Int(payload2[ind])
+            ind = ind + 1
+            values.vesc_id = Int(payload2[ind])
+            ind = ind + 1
+            
+            values.vesc_num = Int(payload2[ind])
+            ind = ind + 1
+            
+            values.watt_left = buffer_get_float32(buffer: payload2, scale:1e4, index:ind);
+            ind = ind + 4
+
+        }
+        
         resetPacket()
+        
+        return values
     }
     
     func resetPacket(){
         messageRead = false
         counter = 0
         endMessage = 256
+        payload = []
         
-        messageReceived = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        payload = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        for i in 0..<messageReceived.count{
+            messageReceived[i] = 0
+        }
     }
     
 }
