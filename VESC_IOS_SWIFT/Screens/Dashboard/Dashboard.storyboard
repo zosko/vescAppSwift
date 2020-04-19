@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Dashboard-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="VESC_IOS_SWIFT" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Dashboard" id="BYZ-38-t0r" customClass="Dashboard" customModule="VESC_IOS_SWIFT" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="45" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="BVh-y6-o07">
-                                <rect key="frame" x="0.0" y="44" width="414" height="760"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="764"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DataCell" textLabel="U8z-hd-ctX" detailTextLabel="GBO-xs-RUY" style="IBUITableViewCellStyleValue1" id="toU-rW-pff">
@@ -50,10 +50,11 @@
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SuV-JA-0uo">
-                                <rect key="frame" x="123" y="812" width="169" height="55"/>
+                                <rect key="frame" x="122.5" y="818" width="169" height="55"/>
                                 <color key="backgroundColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="55" id="6Ez-GU-Rdw"/>
+                                    <constraint firstAttribute="height" constant="55" id="4eG-AU-ht9"/>
+                                    <constraint firstAttribute="width" constant="169" id="NDZ-Ws-zyG"/>
                                 </constraints>
                                 <state key="normal" title="Connect">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -65,14 +66,12 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="SuV-JA-0uo" firstAttribute="top" secondItem="BVh-y6-o07" secondAttribute="bottom" constant="8" id="9Oe-oM-bIE"/>
-                            <constraint firstItem="BVh-y6-o07" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="Drx-kQ-Qao"/>
-                            <constraint firstItem="BVh-y6-o07" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="UEM-vT-k3A"/>
-                            <constraint firstItem="BVh-y6-o07" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="ZvC-f8-aUH"/>
-                            <constraint firstItem="SuV-JA-0uo" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="123" id="fTE-gr-bcz"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="SuV-JA-0uo" secondAttribute="trailing" constant="122" id="hSz-vm-8D6"/>
-                            <constraint firstAttribute="bottom" secondItem="SuV-JA-0uo" secondAttribute="bottom" constant="29" id="hyf-6x-kL1"/>
-                            <constraint firstItem="SuV-JA-0uo" firstAttribute="top" secondItem="BVh-y6-o07" secondAttribute="bottom" constant="8" id="tUM-DX-du1"/>
+                            <constraint firstItem="BVh-y6-o07" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="EBG-SL-W4n"/>
+                            <constraint firstItem="SuV-JA-0uo" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Jcc-QA-CK9"/>
+                            <constraint firstItem="SuV-JA-0uo" firstAttribute="top" secondItem="BVh-y6-o07" secondAttribute="bottom" constant="10" id="P85-Hg-gUP"/>
+                            <constraint firstItem="BVh-y6-o07" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="U3r-gV-IGj"/>
+                            <constraint firstItem="BVh-y6-o07" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="okf-Do-qgt"/>
+                            <constraint firstAttribute="bottom" secondItem="SuV-JA-0uo" secondAttribute="bottom" constant="23" id="ryt-GG-2Na"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>

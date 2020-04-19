@@ -12,20 +12,34 @@ enum PACKET_LENGTH: Int {
     case PACKET_LENGTH_IDENTIFICATION_BYTE_SHORT = 2
     case PACKET_TERMINATION_BYTE = 3
 }
-
+public enum FailedCodes: Int {
+    case FAULT_CODE_NONE = 0
+    case FAULT_CODE_OVER_VOLTAGE
+    case FAULT_CODE_UNDER_VOLTAGE
+    case FAULT_CODE_DRV
+    case FAULT_CODE_ABS_OVER_CURRENT
+    case FAULT_CODE_OVER_TEMP_FET
+    case FAULT_CODE_OVER_TEMP_MOTOR
+    case FAULT_CODE_GATE_DRIVER_OVER_VOLTAGE
+    case FAULT_CODE_GATE_DRIVER_UNDER_VOLTAGE
+    case FAULT_CODE_MCU_UNDER_VOLTAGE
+    case FAULT_CODE_BOOTING_FROM_WATCHDOG_RESET
+    case FAULT_CODE_ENCODER
+}
 public enum COMM_PACKET_ID: Int {
-    case COMM_GET_VALUES_SETUP_SELECTIVE = 51
+    case COMM_GET_VALUES = 4
 }
 
 struct mc_values{
     var v_in = 0.0
     var temp_mos = 0.0
-    var temp_motor = 0.0
+//    var temp_motor = 0.0
     var current_motor = 0.0
     var current_in = 0.0
-    var vesc_num = 0
+//    var id = 0.0
+//    var iq = 0.0
     var rpm = 0.0
-    var duty_now = 0.0
+//    var duty_now = 0.0
     var amp_hours = 0.0
     var amp_hours_charged = 0.0
     var watt_hours = 0.0
@@ -33,11 +47,6 @@ struct mc_values{
     var tachometer = 0
     var tachometer_abs = 0
     var fault_code = 0
-    var pid_pos = 0.0
-    var vesc_id = 0
-    var speed = 0.0
-    var battery_level = 0.0
-    var watt_left = 0.0
     
     init(){
         
@@ -97,28 +106,20 @@ class VESC: NSObject {
     
     func dataForGetValues() -> Data{
         
-        var command : [UInt8] = [UInt8](repeating: 0, count: 5)
-        command[0] = UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue);
-        command[1] = 0x00 //mask MSB
-        command[2] = 0x0F //mask
-        command[3] = 0xFF //mask
-        command[4] = 0xFF //mask LSB
+        var command : [UInt8] = [UInt8](repeating: 0, count: 6)
+        command[0] = UInt8(PACKET_LENGTH.PACKET_LENGTH_IDENTIFICATION_BYTE_SHORT.rawValue)
+        command[1] = 1
+        command[2] = UInt8(COMM_PACKET_ID.COMM_GET_VALUES.rawValue);
         
-        let crcPayload = crc16(data: command, length: command.count)
-        var messageSend : [UInt8] = [UInt8](repeating: 0, count: 10)
+        var payloadCrc : [UInt8] = [UInt8](repeating: 0, count: 1)
+        payloadCrc[0] = UInt8(COMM_PACKET_ID.COMM_GET_VALUES.rawValue);
+        let crc = crc16(data: payloadCrc, length: payloadCrc.count)
         
-        messageSend[0] = UInt8(PACKET_LENGTH.PACKET_LENGTH_IDENTIFICATION_BYTE_SHORT.rawValue)
-        messageSend[1] = 5
-        messageSend[2] = UInt8(COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE.rawValue)
-        messageSend[3] = 0x00
-        messageSend[4] = 0x0F
-        messageSend[5] = 0xFF
-        messageSend[6] = 0xFF
-        messageSend[7] = (UInt8)(crcPayload >> 8)
-        messageSend[8] = (UInt8)(crcPayload & 0xFF)
-        messageSend[9] = UInt8(PACKET_LENGTH.PACKET_TERMINATION_BYTE.rawValue)
+        command[3] = (UInt8)(crc >> 8)
+        command[4] = (UInt8)(crc & 0xFF)
+        command[5] = UInt8(PACKET_LENGTH.PACKET_TERMINATION_BYTE.rawValue)
         
-        return Data(bytes: messageSend, count: messageSend.count)
+        return Data(bytes: command, count: command.count)
     }
     
     func process_incoming_bytes(incomingData: Data) -> Int{
@@ -199,7 +200,6 @@ class VESC: NSObject {
     func readPacket() -> mc_values{
         
         let packetId : COMM_PACKET_ID = COMM_PACKET_ID(rawValue: Int(payload[0]))!
-        var ind : Int = 0
         var values = mc_values()
         
         var payload2 : [UInt8] = []
@@ -207,14 +207,13 @@ class VESC: NSObject {
             payload2.append(payload[i])
         }
         
-        if packetId == COMM_PACKET_ID.COMM_GET_VALUES_SETUP_SELECTIVE {
+        if packetId == COMM_PACKET_ID.COMM_GET_VALUES {
+            var ind : Int = 0
             
-            ind = 4; // Skip the mask
-
             values.temp_mos = buffer_get_float16(buffer: payload2, scale: 1e1, index: ind)
             ind = ind + 2
             
-            values.temp_motor = buffer_get_float16(buffer: payload2, scale: 1e1, index: ind)
+//            values.temp_motor = buffer_get_float16(buffer: payload2, scale: 1e1, index: ind)
             ind = ind + 2
             
             values.current_motor = buffer_get_float32(buffer: payload2, scale: 1e2, index: ind)
@@ -223,19 +222,19 @@ class VESC: NSObject {
             values.current_in = buffer_get_float32(buffer: payload2, scale:1e2, index:ind)
             ind = ind + 4
             
-            values.duty_now = buffer_get_float16(buffer: payload2, scale:1e3, index:ind)
+//            values.id = buffer_get_float32(buffer: payload2, scale:1e2, index:ind)
+            ind = ind + 4
+            
+//            values.iq = buffer_get_float32(buffer: payload2, scale:1e2, index:ind)
+            ind = ind + 4
+            
+//            values.duty_now = buffer_get_float16(buffer: payload2, scale:1e3, index:ind)
             ind = ind + 2
             
             values.rpm = buffer_get_float32(buffer: payload2,scale: 1e0, index:ind)
             ind = ind + 4
             
-            values.speed = buffer_get_float32(buffer: payload2,scale: 1e0,index: ind)
-            ind = ind + 4
-            
             values.v_in = buffer_get_float16(buffer: payload2,scale: 1e1, index:ind)
-            ind = ind + 2
-            
-            values.battery_level = buffer_get_float16(buffer: payload2,scale: 1e1, index:ind)
             ind = ind + 2
             
             values.amp_hours = buffer_get_float32(buffer: payload2, scale:1e4, index:ind)
@@ -255,21 +254,9 @@ class VESC: NSObject {
             
             values.tachometer_abs = Int(buffer_get_int32(buffer: payload2, index:ind))
             ind = ind + 4
-            
-            values.pid_pos = buffer_get_float32(buffer: payload2, scale:1e4, index:ind)
-            ind = ind + 4
 
             values.fault_code = Int(payload2[ind])
             ind = ind + 1
-            
-            values.vesc_id = Int(payload2[ind])
-            ind = ind + 1
-            
-            values.vesc_num = Int(payload2[ind])
-            ind = ind + 1
-            
-            values.watt_left = buffer_get_float32(buffer: payload2, scale:1e4, index:ind);
-            ind = ind + 4
         }
         
         resetPacket()
