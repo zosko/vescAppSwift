@@ -1,2 +1,2 @@
-# VESC_IOS_SWIFT
+# vescAppSwift
 VESC Application developed in Swift 5
