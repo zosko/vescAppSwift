@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="2p6-7L-ujm">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="TCS-Tl-uRg">
+            <objects>
+                <viewController storyboardIdentifier="Dashboard" id="2p6-7L-ujm" customClass="ViewController" customModule="vescAppSwift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ChH-Zk-wpx">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="45" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="emQ-qt-VXG">
+                                <rect key="frame" x="0.0" y="44" width="414" height="767"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DataCell" textLabel="ckK-lP-cqH" detailTextLabel="xBD-Tr-c4e" style="IBUITableViewCellStyleValue1" id="UAb-T0-Tza">
+                                        <rect key="frame" x="0.0" y="44.5" width="414" height="45"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="UAb-T0-Tza" id="oMG-dd-fwI">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="45"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ckK-lP-cqH">
+                                                    <rect key="frame" x="20" y="13" width="33" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xBD-Tr-c4e">
+                                                    <rect key="frame" x="335.5" y="13" width="58.5" height="20.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="2p6-7L-ujm" id="7ld-W7-ERm"/>
+                                    <outlet property="delegate" destination="2p6-7L-ujm" id="Avd-yN-7Fi"/>
+                                </connections>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vy7-PJ-Pxq">
+                                <rect key="frame" x="20" y="821" width="374" height="55"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="55" id="LFN-LW-NUO"/>
+                                </constraints>
+                                <state key="normal" title="Connect">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="onBtnConnect" destination="2p6-7L-ujm" eventType="touchUpInside" id="uZe-mw-cEt"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="kLr-kz-LGf"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="emQ-qt-VXG" firstAttribute="top" secondItem="kLr-kz-LGf" secondAttribute="top" id="N0A-tB-ynZ"/>
+                            <constraint firstItem="emQ-qt-VXG" firstAttribute="trailing" secondItem="kLr-kz-LGf" secondAttribute="trailing" id="P55-FJ-MkL"/>
+                            <constraint firstAttribute="bottom" secondItem="vy7-PJ-Pxq" secondAttribute="bottom" constant="20" id="Zpo-xa-4xn"/>
+                            <constraint firstItem="vy7-PJ-Pxq" firstAttribute="leading" secondItem="kLr-kz-LGf" secondAttribute="leading" constant="20" id="iiU-lf-Agb"/>
+                            <constraint firstItem="vy7-PJ-Pxq" firstAttribute="top" secondItem="emQ-qt-VXG" secondAttribute="bottom" constant="10" id="nZQ-Dl-aSn"/>
+                            <constraint firstItem="kLr-kz-LGf" firstAttribute="trailing" secondItem="vy7-PJ-Pxq" secondAttribute="trailing" constant="20" id="sGo-SJ-Nar"/>
+                            <constraint firstItem="emQ-qt-VXG" firstAttribute="leading" secondItem="kLr-kz-LGf" secondAttribute="leading" id="uGA-Yg-CIQ"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="btnConnect" destination="vy7-PJ-Pxq" id="r4w-U4-lXc"/>
+                        <outlet property="tblPedalessData" destination="emQ-qt-VXG" id="qZW-zH-frk"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RK7-Pa-fN7" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="414" y="56"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

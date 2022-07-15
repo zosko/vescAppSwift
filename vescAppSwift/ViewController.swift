@@ -1,19 +1,18 @@
 //
 //  ViewController.swift
-//  VESC_IOS_SWIFT
+//  vescAppSwift
 //
-//  Created by Bosko Petreski on 1/21/20.
-//  Copyright © 2020 Bosko Petreski. All rights reserved.
+//  Created by Bosko Petreski on 15.7.22.
 //
 
 import UIKit
 import CoreBluetooth
 import CoreLocation
 
-class Dashboard: UIViewController,CBCentralManagerDelegate,CBPeripheralDelegate,UITableViewDelegate,UITableViewDataSource,CLLocationManagerDelegate{
+class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
     
     //MARK: Variables
-    var locationManager:CLLocationManager?
+    var locationManager: CLLocationManager?
     var centralManager: CBCentralManager!
     var connectedPeripheral: CBPeripheral!
     var peripherals : [CBPeripheral] = []
@@ -56,7 +55,7 @@ class Dashboard: UIViewController,CBCentralManagerDelegate,CBPeripheralDelegate,
     func stopSearchReader(){
         centralManager.stopScan()
         
-        let alert = UIAlertController.init(title: "Search device", message: "Choose Pedaless device", preferredStyle: .actionSheet)
+        let alert = UIAlertController.init(title: "Search device", message: "Choose device", preferredStyle: .actionSheet)
         
         for periperal in peripherals{
             let action = UIAlertAction.init(title: periperal.name, style: .default) { (action) in

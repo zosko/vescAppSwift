@@ -1,14 +1,13 @@
 //
 //  AppDelegate.swift
-//  VESC_IOS_SWIFT
+//  vescAppSwift
 //
-//  Created by Bosko Petreski on 1/21/20.
-//  Copyright © 2020 Bosko Petreski. All rights reserved.
+//  Created by Bosko Petreski on 15.7.22.
 //
 
 import UIKit
 
-@UIApplicationMain
+@main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
