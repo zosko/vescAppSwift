@@ -16,8 +16,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="45" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="emQ-qt-VXG">
-                                <rect key="frame" x="0.0" y="44" width="414" height="767"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="45" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="emQ-qt-VXG">
+                                <rect key="frame" x="0.0" y="44" width="414" height="676"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DataCell" textLabel="ckK-lP-cqH" detailTextLabel="xBD-Tr-c4e" style="IBUITableViewCellStyleValue1" id="UAb-T0-Tza">
@@ -50,12 +51,10 @@
                                     <outlet property="delegate" destination="2p6-7L-ujm" id="Avd-yN-7Fi"/>
                                 </connections>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vy7-PJ-Pxq">
-                                <rect key="frame" x="20" y="821" width="374" height="55"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vy7-PJ-Pxq">
+                                <rect key="frame" x="18" y="736" width="374" height="55"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" systemColor="linkColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="55" id="LFN-LW-NUO"/>
-                                </constraints>
                                 <state key="normal" title="Connect">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
@@ -63,27 +62,39 @@
                                     <action selector="onBtnConnect" destination="2p6-7L-ujm" eventType="touchUpInside" id="uZe-mw-cEt"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AOW-kO-tYP">
+                                <rect key="frame" x="20" y="799" width="181" height="55"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <state key="normal" title="unlock">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="onBtnUnlock" destination="2p6-7L-ujm" eventType="touchUpInside" id="o9I-g8-IwP"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Xd-YU-vcg">
+                                <rect key="frame" x="210" y="799" width="182" height="55"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <state key="normal" title="Lock">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="onBtnLock" destination="2p6-7L-ujm" eventType="touchUpInside" id="9Jd-7v-pPF"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="kLr-kz-LGf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="emQ-qt-VXG" firstAttribute="top" secondItem="kLr-kz-LGf" secondAttribute="top" id="N0A-tB-ynZ"/>
-                            <constraint firstItem="emQ-qt-VXG" firstAttribute="trailing" secondItem="kLr-kz-LGf" secondAttribute="trailing" id="P55-FJ-MkL"/>
-                            <constraint firstAttribute="bottom" secondItem="vy7-PJ-Pxq" secondAttribute="bottom" constant="20" id="Zpo-xa-4xn"/>
-                            <constraint firstItem="vy7-PJ-Pxq" firstAttribute="leading" secondItem="kLr-kz-LGf" secondAttribute="leading" constant="20" id="iiU-lf-Agb"/>
-                            <constraint firstItem="vy7-PJ-Pxq" firstAttribute="top" secondItem="emQ-qt-VXG" secondAttribute="bottom" constant="10" id="nZQ-Dl-aSn"/>
-                            <constraint firstItem="kLr-kz-LGf" firstAttribute="trailing" secondItem="vy7-PJ-Pxq" secondAttribute="trailing" constant="20" id="sGo-SJ-Nar"/>
-                            <constraint firstItem="emQ-qt-VXG" firstAttribute="leading" secondItem="kLr-kz-LGf" secondAttribute="leading" id="uGA-Yg-CIQ"/>
-                        </constraints>
                     </view>
                     <connections>
-                        <outlet property="btnConnect" destination="vy7-PJ-Pxq" id="r4w-U4-lXc"/>
                         <outlet property="tblPedalessData" destination="emQ-qt-VXG" id="qZW-zH-frk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RK7-Pa-fN7" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="414" y="56"/>
+            <point key="canvasLocation" x="413.04347826086962" y="55.580357142857139"/>
         </scene>
     </scenes>
     <resources>

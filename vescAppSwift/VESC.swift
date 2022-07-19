@@ -28,6 +28,8 @@ public enum FailedCodes: Int {
 }
 public enum COMM_PACKET_ID: Int {
     case COMM_GET_VALUES = 4
+    case COMM_TERMINAL_CMD = 20
+    case COMM_PRINT = 21
 }
 
 struct mc_values{
@@ -91,6 +93,7 @@ class VESC: NSObject {
     var lenPayload = 0
     var messageReceived : [UInt8] = [UInt8](repeating: 0, count: 256)
     var payload : [UInt8] = []
+    var values = mc_values()
     
     func crc16(data: [UInt8], length : Int) -> UInt16{
         var crc = 0
@@ -102,6 +105,49 @@ class VESC: NSObject {
         
         crc = crc & 0xFFFF
         return UInt16(crc)
+    }
+    
+    func terminal(cmd: String) -> Data{
+        var index = 0
+        let packetLength = cmd.count + 1 // 1 is for command plus
+        
+        var command : [UInt8] = [UInt8](repeating: 0, count: packetLength + 5)
+        
+        command[index] = UInt8(PACKET_LENGTH.PACKET_LENGTH_IDENTIFICATION_BYTE_SHORT.rawValue)
+        index += 1
+        
+        command[index] = UInt8(packetLength) // lenght of packet
+        index += 1
+        
+        command[index] = UInt8(COMM_PACKET_ID.COMM_TERMINAL_CMD.rawValue);
+        index += 1
+                
+        let asUInt8Array = cmd.utf8.map{ UInt8($0) }
+        
+        asUInt8Array.forEach { char in
+            command[index] = char
+            index += 1
+        }
+        
+        var payloadCrc : [UInt8] = [UInt8](repeating: 0, count: packetLength)
+        payloadCrc[0] = UInt8(COMM_PACKET_ID.COMM_TERMINAL_CMD.rawValue);
+        var payloadTempIndex = 1
+        asUInt8Array.forEach { char in
+            payloadCrc[payloadTempIndex] = char
+            payloadTempIndex += 1
+        }
+        let crc = crc16(data: payloadCrc, length: payloadCrc.count)
+        
+        command[index] = (UInt8)(crc >> 8)
+        index += 1
+        
+        command[index] = (UInt8)(crc & 0xFF)
+        index += 1
+        
+        command[index] = UInt8(PACKET_LENGTH.PACKET_TERMINATION_BYTE.rawValue)
+        index += 1
+        
+        return Data(bytes: command, count: command.count)
     }
     
     func dataForGetValues() -> Data{
@@ -127,6 +173,14 @@ class VESC: NSObject {
         let bytes: [UInt8] = incomingData.map{ $0 }
         
         for i in 0 ..< incomingData.count {
+            
+            if counter >= messageReceived.count{
+                counter = 0
+                for i in 0..<messageReceived.count{
+                    messageReceived[i] = 0
+                }
+            }
+            
             messageReceived[counter] = bytes[i]
             counter = counter + 1
             
@@ -200,13 +254,13 @@ class VESC: NSObject {
     func readPacket() -> mc_values{
         
         let packetId : COMM_PACKET_ID = COMM_PACKET_ID(rawValue: Int(payload[0]))!
-        var values = mc_values()
+        
         
         var payload2 : [UInt8] = []
         for i in 1 ..< payload.count {
             payload2.append(payload[i])
         }
-        
+        print("packetId \(packetId)")
         if packetId == COMM_PACKET_ID.COMM_GET_VALUES {
             var ind : Int = 0
             
@@ -257,6 +311,10 @@ class VESC: NSObject {
 
             values.fault_code = Int(payload2[ind])
             ind = ind + 1
+        } else if packetId == COMM_PACKET_ID.COMM_PRINT {
+            if let string = String(bytes: payload2, encoding: .utf8) {
+                print("TERMINAL: \(string)")
+            }
         }
         
         resetPacket()

@@ -7,64 +7,63 @@
 
 import UIKit
 import CoreBluetooth
-import CoreLocation
 
-class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
+class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, UITableViewDelegate, UITableViewDataSource {
     
     //MARK: Variables
-    var locationManager: CLLocationManager?
     var centralManager: CBCentralManager!
     var connectedPeripheral: CBPeripheral!
     var peripherals : [CBPeripheral] = []
     var txCharacteristic: CBCharacteristic!
     var writeType : CBCharacteristicWriteType = .withoutResponse
     var arrPedalessData : [[String:String]] = []
-    var secondStarted = 0
     var timerValues : Timer!
     var vescController : VESC!
-    var gpsSpeed = 0.0
-    var gpsDistance = 0.0
-    var gpsPrevLocation : CLLocation?
     
     //MARK: IBOutlets
     @IBOutlet var tblPedalessData : UITableView!
-    @IBOutlet var btnConnect : UIButton!
     
     //MARK: IBActions
     @IBAction func onBtnConnect(){
         if connectedPeripheral != nil {
-            btnConnect.setTitle("Connected", for: .normal)
             centralManager.cancelPeripheralConnection(connectedPeripheral)
             timerValues.invalidate()
             timerValues = nil
             connectedPeripheral = nil;
             peripherals.removeAll()
-            secondStarted = 0;
         }
         else{
-            btnConnect.setTitle("Disconnect", for: .normal)
             peripherals.removeAll()
-            centralManager.scanForPeripherals(withServices: [CBUUID(string: "FFE0")], options: nil)
+            centralManager.scanForPeripherals(withServices: [CBUUID(string: "FFF0")], options: nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.stopSearchReader()
             }
         }
     }
     
+    @IBAction func onBtnLock() {
+        self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "ul Calibike enable"), for: self.txCharacteristic, type: self.writeType)
+        self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "lk"), for: self.txCharacteristic, type: self.writeType)
+    }
+    
+    @IBAction func onBtnUnlock() {
+        self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "ul Calibike disable"), for: self.txCharacteristic, type: self.writeType)
+    }
+    
     //MARK: CustomFunctions
     func stopSearchReader(){
         centralManager.stopScan()
         
-        let alert = UIAlertController.init(title: "Search device", message: "Choose device", preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Search device", message: "Choose device", preferredStyle: .actionSheet)
         
-        for periperal in peripherals{
-            let action = UIAlertAction.init(title: periperal.name, style: .default) { (action) in
+        for periperal in peripherals {
+            let action = UIAlertAction(title: periperal.name ?? "no-name", style: .default) { action in
                 self.centralManager.connect(periperal, options: nil)
             }
             alert.addAction(action)
         }
-        let actionCancel = UIAlertAction.init(title: "Cancel", style: .destructive) { (action) in
-            self.btnConnect.setTitle("Connect", for: .normal)
+        let actionCancel = UIAlertAction(title: "Cancel", style: .destructive) { action in
+            
         }
         alert.addAction(actionCancel)
         
@@ -87,33 +86,23 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         let speed = dataVesc.rpm * ratioRpmSpeed
         let distance = Double(dataVesc.tachometer_abs) * ratioPulseDistance
         let power = dataVesc.current_in * dataVesc.v_in
-
-        let h = secondStarted / 3600
-        let m = (secondStarted / 60) % 60
-        let s = secondStarted % 60
                         
-        arrPedalessData = [["title":"Temp MOSFET","data":String(format:"%.2f degC",dataVesc.temp_mos)],
-                           ["title":"Ah Discharged","data":String(format:"%.4f Ah",dataVesc.amp_hours)],
-                           ["title":"Ah Charged","data":String(format:"%.4f Ah",dataVesc.amp_hours_charged)],
-                           ["title":"Motor Current","data":String(format:"%.2f A",dataVesc.current_motor)],
-                           ["title":"Battery Current","data":String(format:"%.2f A",dataVesc.current_in)],
-                           ["title":"Watts Discharged","data":String(format:"%.4f Wh" ,dataVesc.watt_hours)],
-                           ["title":"Watts Charged","data":String(format:"%.4f Wh" ,dataVesc.watt_hours_charged)],
-                           ["title":"Power","data":String(format:"%.f W",power)],
-                           ["title":"Distance","data":String(format:"%.2f km", distance)],
-                           ["title":"GPS Distance","data":String(format:"%.2f km", gpsDistance)],
-                           ["title":"Speed","data":String(format:"%.1f km/h",speed)],
-                           ["title":"GPS Speed","data":String(format:"%.1f km/h",gpsSpeed)],
-                           ["title":"Fault Code","data":String(format: "%d",dataVesc.fault_code)],
-                           ["title":"Drive time","data":String(format:"%ld:%02ld:%02ld", h, m, s)],
-                           ["title":"Voltage","data":String(format:"%.2f V",dataVesc.v_in)],
+        arrPedalessData = [
+            ["title":"Temp MOSFET","data":String(format:"%.2f degC",dataVesc.temp_mos)],
+            ["title":"Ah Discharged","data":String(format:"%.4f Ah",dataVesc.amp_hours)],
+            ["title":"Ah Charged","data":String(format:"%.4f Ah",dataVesc.amp_hours_charged)],
+            ["title":"Motor Current","data":String(format:"%.2f A",dataVesc.current_motor)],
+            ["title":"Battery Current","data":String(format:"%.2f A",dataVesc.current_in)],
+            ["title":"Watts Discharged","data":String(format:"%.4f Wh" ,dataVesc.watt_hours)],
+            ["title":"Watts Charged","data":String(format:"%.4f Wh" ,dataVesc.watt_hours_charged)],
+            ["title":"Power","data":String(format:"%.f W",power)],
+            ["title":"Distance","data":String(format:"%.2f km", distance)],
+            ["title":"Speed","data":String(format:"%.1f km/h",speed)],
+            ["title":"Fault Code","data":String(format: "%d",dataVesc.fault_code)],
+            ["title":"Voltage","data":String(format:"%.2f V",dataVesc.v_in)],
         ];
         
         tblPedalessData.reloadData()
-
-        if(dataVesc.current_motor > 0){
-           secondStarted = secondStarted + 1;
-        }
     }
     
     //MARK: CentralManagerDelegates
@@ -175,7 +164,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         for service in peripheral.services!{
-            peripheral.discoverCharacteristics([CBUUID (string: "FFE1")], for: service)
+            peripheral.discoverCharacteristics([CBUUID (string: "FFF6")], for: service)
         }
     }
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
@@ -187,7 +176,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         for characteristic in service.characteristics! {
             
-            if characteristic.uuid == CBUUID(string: "FFE1"){
+            if characteristic.uuid == CBUUID(string: "FFF6"){
                 txCharacteristic = characteristic
                 peripheral.setNotifyValue(true, for: characteristic)
                 writeType = characteristic.properties == .write ? .withResponse : .withoutResponse
@@ -215,36 +204,11 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         return cell
     }
     
-    //MARK: CoreLocation
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last {
-            if(location.speed > 0){
-                gpsSpeed = location.speed * 3.6
-            }
-            
-            if gpsPrevLocation != nil {
-                let distance = location.distance(from: gpsPrevLocation!) / 1000.0
-                gpsDistance = gpsDistance + distance
-            }
-            
-            gpsPrevLocation = location
-        }
-    }
-    
     //MARK: ViewDelegates
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         centralManager = CBCentralManager.init(delegate: self, queue: nil)
-        
         vescController = VESC()
-        
-        locationManager = CLLocationManager()
-        locationManager?.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager?.requestAlwaysAuthorization()
-        locationManager?.startUpdatingLocation()
-        locationManager?.delegate = self
-        locationManager?.allowsBackgroundLocationUpdates = true
     }
 
 

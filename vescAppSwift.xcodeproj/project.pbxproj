@@ -291,10 +291,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SXS477G26E;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = vescAppSwift/Info.plist;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "For GPS Calculations";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "For GPS Calculations";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "To connect with VESC";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -321,10 +321,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SXS477G26E;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = vescAppSwift/Info.plist;
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "For GPS Calculations";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "For GPS Calculations";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "To connect with VESC";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
