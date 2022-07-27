@@ -42,12 +42,32 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     @IBAction func onBtnLock() {
-        self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "ul Calibike enable"), for: self.txCharacteristic, type: self.writeType)
-        self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "lk"), for: self.txCharacteristic, type: self.writeType)
+        if connectedPeripheral != nil {
+            self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "ul Calibike enable"), for: self.txCharacteristic, type: self.writeType)
+            self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "lk"), for: self.txCharacteristic, type: self.writeType)
+        } else {
+            let alert = UIAlertController(title: "Not connected", message: "", preferredStyle: .alert)
+            let actionCancel = UIAlertAction(title: "Ok", style: .destructive) { action in
+                
+            }
+            alert.addAction(actionCancel)
+            
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
     @IBAction func onBtnUnlock() {
-        self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "ul Calibike disable"), for: self.txCharacteristic, type: self.writeType)
+        if connectedPeripheral != nil {
+            self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "ul Calibike disable"), for: self.txCharacteristic, type: self.writeType)
+        } else {
+            let alert = UIAlertController(title: "Not connected", message: "", preferredStyle: .alert)
+            let actionCancel = UIAlertAction(title: "Ok", style: .destructive) { action in
+                
+            }
+            alert.addAction(actionCancel)
+            
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
     //MARK: CustomFunctions
