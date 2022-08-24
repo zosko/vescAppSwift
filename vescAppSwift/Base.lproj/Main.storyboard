@@ -64,26 +64,26 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AOW-kO-tYP">
-                                <rect key="frame" x="20" y="799" width="181" height="55"/>
+                                <rect key="frame" x="20" y="799" width="117.5" height="55"/>
                                 <color key="backgroundColor" systemColor="linkColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="55" id="PDJ-4F-VGd"/>
                                 </constraints>
-                                <state key="normal" title="unlock">
+                                <state key="normal" title="AL Disable">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <action selector="onBtnUnlock" destination="2p6-7L-ujm" eventType="touchUpInside" id="o9I-g8-IwP"/>
+                                    <action selector="onBtnAutoUnlockDisable" destination="2p6-7L-ujm" eventType="touchUpInside" id="3SC-E4-8LZ"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Xd-YU-vcg">
-                                <rect key="frame" x="211" y="799" width="181" height="55"/>
+                                <rect key="frame" x="274.5" y="799" width="117.5" height="55"/>
                                 <color key="backgroundColor" systemColor="linkColor"/>
                                 <state key="normal" title="Lock">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <action selector="onBtnLock" destination="2p6-7L-ujm" eventType="touchUpInside" id="9Jd-7v-pPF"/>
+                                    <action selector="onBtnLock" destination="2p6-7L-ujm" eventType="touchUpInside" id="7AW-Sj-bQP"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wu6-xR-p5A">
@@ -99,6 +99,16 @@
                                     <action selector="onBtnChangePassword" destination="2p6-7L-ujm" eventType="touchUpInside" id="5eh-30-9kK"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jXQ-Uh-CPS">
+                                <rect key="frame" x="147.5" y="799" width="117" height="55"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <state key="normal" title="AL Enable">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="onBtnAutoLockEnable" destination="2p6-7L-ujm" eventType="touchUpInside" id="YGz-2O-d7m"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="kLr-kz-LGf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -110,16 +120,20 @@
                             <constraint firstItem="emQ-qt-VXG" firstAttribute="trailing" secondItem="kLr-kz-LGf" secondAttribute="trailing" id="B8v-UE-M15"/>
                             <constraint firstItem="vy7-PJ-Pxq" firstAttribute="leading" secondItem="kLr-kz-LGf" secondAttribute="leading" constant="18" id="BFV-CV-21n"/>
                             <constraint firstItem="AOW-kO-tYP" firstAttribute="leading" secondItem="kLr-kz-LGf" secondAttribute="leading" constant="20" id="D7d-mJ-9Nw"/>
+                            <constraint firstItem="jXQ-Uh-CPS" firstAttribute="centerY" secondItem="AOW-kO-tYP" secondAttribute="centerY" id="Gp9-F0-1sX"/>
                             <constraint firstItem="kLr-kz-LGf" firstAttribute="trailing" secondItem="6Xd-YU-vcg" secondAttribute="trailing" constant="22" id="N0k-Of-Dab"/>
                             <constraint firstItem="wu6-xR-p5A" firstAttribute="width" secondItem="vy7-PJ-Pxq" secondAttribute="width" id="RSl-AV-us6"/>
-                            <constraint firstItem="6Xd-YU-vcg" firstAttribute="leading" secondItem="AOW-kO-tYP" secondAttribute="trailing" constant="10" id="ZVW-yx-PS6"/>
                             <constraint firstItem="6Xd-YU-vcg" firstAttribute="centerY" secondItem="AOW-kO-tYP" secondAttribute="centerY" id="bIe-zh-biW"/>
+                            <constraint firstItem="jXQ-Uh-CPS" firstAttribute="leading" secondItem="AOW-kO-tYP" secondAttribute="trailing" constant="10" id="c6l-uP-074"/>
                             <constraint firstItem="6Xd-YU-vcg" firstAttribute="width" secondItem="AOW-kO-tYP" secondAttribute="width" id="dzq-rq-CZN"/>
                             <constraint firstItem="wu6-xR-p5A" firstAttribute="centerY" secondItem="vy7-PJ-Pxq" secondAttribute="centerY" id="ei1-j8-cNK"/>
                             <constraint firstItem="kLr-kz-LGf" firstAttribute="bottom" secondItem="AOW-kO-tYP" secondAttribute="bottom" constant="8" id="ey7-vw-XAs"/>
                             <constraint firstItem="AOW-kO-tYP" firstAttribute="top" secondItem="vy7-PJ-Pxq" secondAttribute="bottom" constant="8" symbolic="YES" id="fWr-7J-H5b"/>
                             <constraint firstItem="kLr-kz-LGf" firstAttribute="trailing" secondItem="wu6-xR-p5A" secondAttribute="trailing" constant="22" id="ocl-9g-VIu"/>
+                            <constraint firstItem="jXQ-Uh-CPS" firstAttribute="width" secondItem="AOW-kO-tYP" secondAttribute="width" id="sGc-IV-cmG"/>
                             <constraint firstItem="vy7-PJ-Pxq" firstAttribute="top" secondItem="emQ-qt-VXG" secondAttribute="bottom" constant="16" id="sWa-v8-lex"/>
+                            <constraint firstItem="jXQ-Uh-CPS" firstAttribute="height" secondItem="AOW-kO-tYP" secondAttribute="height" id="sZF-CY-KIV"/>
+                            <constraint firstItem="6Xd-YU-vcg" firstAttribute="leading" secondItem="jXQ-Uh-CPS" secondAttribute="trailing" constant="10" id="z1p-ej-hBf"/>
                         </constraints>
                     </view>
                     <connections>

@@ -15,7 +15,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     var connectedPeripheral: CBPeripheral!
     var peripherals : [CBPeripheral] = []
     var txCharacteristic: CBCharacteristic!
-    var writeType : CBCharacteristicWriteType = .withoutResponse
+    var txWriteType : CBCharacteristicWriteType = .withoutResponse
     var arrPedalessData : [[String:String]] = []
     var timerValues : Timer!
     var vescController : VESC!
@@ -30,6 +30,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         let actionSave = UIAlertAction(title: "Save", style: .default) { action in
             guard let newPass = alert.textFields?.first?.text else { return }
             self.password = newPass
+            
+//            vescController.terminal(cmd: "sp \(newPass)").forEach { chunk in
+//                self.connectedPeripheral.writeValue(chunk, for: self.txCharacteristic, type: self.txWriteType)
+//            }
         }
         alert.addAction(actionSave)
         let actionCancel = UIAlertAction(title: "Cancel", style: .destructive) { action in }
@@ -49,17 +53,18 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
         else{
             peripherals.removeAll()
-            centralManager.scanForPeripherals(withServices: nil, options: nil)
+            centralManager.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey:false])
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.stopSearchReader()
             }
         }
     }
     
-    @IBAction func onBtnLock() {
+    @IBAction func onBtnAutoLockEnable() {
         if connectedPeripheral != nil {
-            self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "ul \(password) enable"), for: self.txCharacteristic, type: self.writeType)
-            self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "lk"), for: self.txCharacteristic, type: self.writeType)
+            vescController.terminal(cmd: "ul \(password) enable").forEach { chunk in
+                self.connectedPeripheral.writeValue(chunk, for: txCharacteristic, type: txWriteType)
+            }
         } else {
             let alert = UIAlertController(title: "Not connected", message: "", preferredStyle: .alert)
             let actionCancel = UIAlertAction(title: "Ok", style: .destructive) { action in }
@@ -68,9 +73,25 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
     }
     
-    @IBAction func onBtnUnlock() {
+    @IBAction func onBtnLock() {
         if connectedPeripheral != nil {
-            self.connectedPeripheral.writeValue(self.vescController.terminal(cmd: "ul \(password) disable"), for: self.txCharacteristic, type: self.writeType)
+            vescController.terminal(cmd: "lk").forEach { chunk in
+                self.connectedPeripheral.writeValue(chunk, for: txCharacteristic, type: txWriteType)
+            }
+        } else {
+            let alert = UIAlertController(title: "Not connected", message: "", preferredStyle: .alert)
+            let actionCancel = UIAlertAction(title: "Ok", style: .destructive) { action in }
+            alert.addAction(actionCancel)
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func onBtnAutoUnlockDisable() {
+        if connectedPeripheral != nil {
+            print("MAX LENGTH \(connectedPeripheral.maximumWriteValueLength(for: txWriteType))")
+            vescController.terminal(cmd: "ul \(password) disable").forEach { chunk in
+                self.connectedPeripheral.writeValue(chunk, for: txCharacteristic, type: txWriteType)
+            }
         } else {
             let alert = UIAlertController(title: "Not connected", message: "", preferredStyle: .alert)
             let actionCancel = UIAlertAction(title: "Ok", style: .destructive) { action in }
@@ -98,9 +119,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         
         self.present(alert, animated: true, completion: nil)
     }
+    
     func doGetValues(){
         timerValues = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (timer) in
-            self.connectedPeripheral.writeValue(self.vescController.dataForGetValues(), for: self.txCharacteristic, type: self.writeType)
+            self.connectedPeripheral.writeValue(self.vescController.dataForGetValues(), for: self.txCharacteristic, type: self.txWriteType)
         })
     }
     func presentData(dataVesc : mc_values){
@@ -148,7 +170,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         print("Bluetooth: " + message);
     }
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        if !peripherals.contains(peripheral){
+        if !peripherals.contains(peripheral) && ((peripheral.name?.isEmpty) != nil) {
             peripherals.append(peripheral)
         }
     }
@@ -159,29 +181,15 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         connectedPeripheral.delegate = self
         connectedPeripheral.discoverServices(nil)
     }
-    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        if error != nil {
-            print("FailToConnect" + error!.localizedDescription)
-        }
-    }
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if error != nil {
-            print("FailToDisconnect" + error!.localizedDescription)
+            print("FailToDisconnect " + error!.localizedDescription)
             return
         }
         vescController.resetPacket()
     }
     
     //MARK: PeripheralDelegates
-    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
-        if error != nil {
-            print("Error receiving didWriteValueFor \(characteristic) : " + error!.localizedDescription)
-            return
-        }
-    }
-    func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
-        
-    }
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if error != nil {
             print("Error receiving notification for characteristic \(characteristic) : " + error!.localizedDescription)
@@ -192,69 +200,25 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
     }
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        guard let services = peripheral.services else {
-            let alert = UIAlertController(title: "No services", message: "", preferredStyle: .alert)
-            let actionCancel = UIAlertAction(title: "Ok", style: .destructive) { action in }
-            alert.addAction(actionCancel)
-            self.present(alert, animated: true, completion: nil)
-            
-            return
-        }
-        
-        let alert = UIAlertController(title: "Select Service", message: "", preferredStyle: .actionSheet)
-        
-        services.forEach { service in
-            let action = UIAlertAction(title: service.uuid.uuidString , style: .default) { action in
-                peripheral.discoverCharacteristics(nil, for: service)
-            }
-            alert.addAction(action)
-        }
-        
-        let actionCancel = UIAlertAction(title: "Cancel", style: .destructive) { action in
-            
-        }
-        alert.addAction(actionCancel)
-        
-        self.present(alert, animated: true, completion: nil)
-    }
-    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        if error != nil {
-            print("Error receiving didUpdateNotificationStateFor \(characteristic) : " + error!.localizedDescription)
-            return
+        for service in peripheral.services!{
+            peripheral.discoverCharacteristics(nil, for: service)
         }
     }
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        
-        guard let chars = service.characteristics else {
-            let alert = UIAlertController(title: "Not connected", message: "", preferredStyle: .alert)
-            let actionCancel = UIAlertAction(title: "Ok", style: .destructive) { action in }
-            alert.addAction(actionCancel)
-            self.present(alert, animated: true, completion: nil)
-            
-            return
-        }
-        
-        let alert = UIAlertController(title: "Select Characteristic", message: "", preferredStyle: .actionSheet)
-        
-        chars.forEach { char in
-            let action = UIAlertAction(title: char.uuid.uuidString , style: .default) { action in
-                self.txCharacteristic = char
-                self.writeType = char.properties == .write ? .withResponse : .withoutResponse
-                peripheral.setNotifyValue(true, for: char)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.doGetValues()
-                }
+        for characteristic in service.characteristics! {
+
+            if characteristic.uuid.uuidString.contains("0002") {
+                txCharacteristic = characteristic
+                txWriteType = characteristic.properties == .write ? .withResponse : .withoutResponse
             }
-            alert.addAction(action)
-        }
-        
-        let actionCancel = UIAlertAction(title: "Cancel", style: .destructive) { action in
             
+            if characteristic.uuid.uuidString.contains("0003") {
+                peripheral.setNotifyValue(true, for: characteristic)
+            }
         }
-        alert.addAction(actionCancel)
-        
-        self.present(alert, animated: true, completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.doGetValues()
+        }
     }
     
     //MARK: TableViewDelegates

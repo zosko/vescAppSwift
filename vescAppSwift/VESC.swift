@@ -107,7 +107,7 @@ class VESC: NSObject {
         return UInt16(crc)
     }
     
-    func terminal(cmd: String) -> Data{
+    func terminal(cmd: String) -> [Data]{
         var index = 0
         let packetLength = cmd.count + 1 // 1 is for command plus
         
@@ -147,7 +147,23 @@ class VESC: NSObject {
         command[index] = UInt8(PACKET_LENGTH.PACKET_TERMINATION_BYTE.rawValue)
         index += 1
         
-        return Data(bytes: command, count: command.count)
+        print("SEND: [\(cmd)] [\(command.count)]")
+        
+        let dataToSend = Data(bytes: command, count: command.count)
+        
+        let length = dataToSend.count
+        let chunkSize = 20
+        var offset = 0
+        
+        var chunks: [Data] = []
+        repeat {
+            let thisChunkSize = ((length - offset) > chunkSize) ? chunkSize : (length - offset);
+            let chunk = dataToSend.subdata(in: offset..<offset + thisChunkSize )
+            chunks.append(chunk)
+            offset += thisChunkSize;
+        } while (offset < length)
+        
+        return chunks
     }
     
     func dataForGetValues() -> Data{
@@ -260,7 +276,7 @@ class VESC: NSObject {
         for i in 1 ..< payload.count {
             payload2.append(payload[i])
         }
-        print("packetId \(packetId)")
+
         if packetId == COMM_PACKET_ID.COMM_GET_VALUES {
             var ind : Int = 0
             
