@@ -243,7 +243,5 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         centralManager = CBCentralManager.init(delegate: self, queue: nil)
         vescController = VESC()
     }
-
-
 }
 
